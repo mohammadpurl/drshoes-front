@@ -60,7 +60,7 @@ function HomeContent() {
       <Header search={search} onSearchChange={setSearch} />
       <main className="page-container w-full min-w-0 pb-24 md:pb-8">
         <div className="flex w-full min-w-0 flex-col gap-4 py-4">
-          <Highlights onSelect={handleHighlight} />
+          {/* <Highlights onSelect={handleHighlight} /> */}
           <HeroBanner />
           <BrandScroll selected={filters.brands} onToggle={toggleBrand} />
           <CategoryTabs active={category} onChange={setCategory} />

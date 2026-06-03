@@ -27,8 +27,24 @@ export function Highlights({ onSelect }: HighlightsProps) {
           className="flex w-full flex-col items-center gap-1.5"
         >
           <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-primary via-accent to-highlight p-[2px] sm:h-16 sm:w-16">
-            <span className="flex h-full w-full items-center justify-center rounded-full bg-background text-xl sm:text-2xl">
-              {h.emoji}
+            <span
+              className={
+                h.image
+                  ? "relative h-full w-full overflow-hidden rounded-full bg-cover bg-center"
+                  : "flex h-full w-full items-center justify-center rounded-full bg-background text-xl sm:text-2xl"
+              }
+              style={
+                h.image ? { backgroundImage: `url(${h.image})` } : undefined
+              }
+            >
+              {h.image ? (
+                <span
+                  className="absolute inset-0 rounded-full bg-black/15"
+                  aria-hidden
+                />
+              ) : (
+                h.emoji
+              )}
             </span>
           </span>
           <span className="text-center text-[11px] font-medium leading-tight sm:text-xs">

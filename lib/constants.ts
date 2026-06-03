@@ -24,11 +24,41 @@ export const BRANDS: Brand[] = [
 
 export const HIGHLIGHTS = [
   { id: "new", label: "تازه‌ها", emoji: "✨", filter: "new" },
-  { id: "bestseller", label: "پرفروش", emoji: "🔥", filter: "bestseller" },
-  { id: "brands", label: "برندها", emoji: "👟", filter: "brands" },
-  { id: "discount", label: "تخفیف", emoji: "💰", filter: "discount" },
-  { id: "trail", label: "تریل", emoji: "⛰️", filter: "trail" },
-  { id: "race", label: "مسابقه", emoji: "🏁", filter: "race" },
+  {
+    id: "bestseller",
+    label: "پرفروش",
+    emoji: "🔥",
+    filter: "bestseller",
+    image: "/images/Bestseller.jfif",
+  },
+  {
+    id: "brands",
+    label: "برندها",
+    emoji: "👟",
+    filter: "brands",
+    image: "/images/Brands.jfif",
+  },
+  {
+    id: "discount",
+    label: "تخفیف",
+    emoji: "💰",
+    filter: "discount",
+    image: "/images/Discount.jfif",
+  },
+  {
+    id: "trail",
+    label: "تریل",
+    emoji: "⛰️",
+    filter: "trail",
+    image: "/images/Trail.jfif",
+  },
+  {
+    id: "race",
+    label: "مسابقه",
+    emoji: "🏁",
+    filter: "race",
+    image: "/images/race.jfif",
+  },
 ];
 
 export const CATEGORIES: { id: string; label: string; value?: Category | "all" }[] =

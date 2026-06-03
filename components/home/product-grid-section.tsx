@@ -53,7 +53,7 @@ export function ProductGridSection({
   }
 
   return (
-    <section className="w-full min-w-0 pb-8 pt-4">
+    <section id="products" className="w-full min-w-0 scroll-mt-24 pb-8 pt-4">
       {products.length === 0 ? (
         <p className="py-12 text-center text-muted-foreground">
           محصولی یافت نشد
