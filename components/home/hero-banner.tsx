@@ -56,16 +56,16 @@ export function HeroBanner() {
       />
 
       <div
-        className="absolute inset-0 bg-gradient-to-e from-black from-0% via-black/90 via-45% to-transparent to-100%"
+        className="absolute inset-0 bg-gradient-to-e from-white/95 from-0% via-white/75 via-45% to-transparent to-100%"
         aria-hidden
       />
       <div
-        className="absolute inset-0 bg-black/25 md:bg-transparent"
+        className="absolute inset-0 bg-white/40 md:bg-transparent"
         aria-hidden
       />
 
       <div className="relative z-10 flex h-full min-h-[inherit] flex-col justify-center p-5 sm:p-7 md:p-10 lg:p-12">
-        <div className="ms-auto flex w-full max-w-xl flex-col items-start gap-4 text-white md:gap-5">
+        <div className="ms-auto flex w-full max-w-xl flex-col items-start gap-4 text-black md:gap-5">
           <motion.div
             initial={{ y: 12, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -76,7 +76,7 @@ export function HeroBanner() {
               هر قدم، یک انتخاب{" "}
               <span className="text-[#22c55e]">حرفه‌ای</span>
             </h1>
-            <p className="max-w-md text-sm leading-relaxed text-white/90 sm:text-base md:text-lg">
+            <p className="max-w-md text-sm leading-relaxed text-black/80 sm:text-base md:text-lg">
               کفش‌های رانینگ اورجینال مناسب فرم و آناتومی پای شما
             </p>
           </motion.div>
@@ -92,14 +92,17 @@ export function HeroBanner() {
                 key={title}
                 className="flex min-w-[7.5rem] items-center gap-2.5 sm:min-w-0"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/25 bg-white/10 sm:h-10 sm:w-10">
-                  <Icon className="h-4 w-4 sm:h-[18px] sm:w-[18px]" strokeWidth={1.75} />
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-black/15 bg-black/5 sm:h-10 sm:w-10">
+                  <Icon
+                    className="h-4 w-4 text-black sm:h-[18px] sm:w-[18px]"
+                    strokeWidth={1.75}
+                  />
                 </span>
                 <span className="flex flex-col gap-0.5 text-start">
-                  <span className="text-[11px] font-semibold leading-tight sm:text-xs">
+                  <span className="text-[11px] font-semibold leading-tight text-black sm:text-xs">
                     {title}
                   </span>
-                  <span className="text-[10px] leading-tight text-white/75 sm:text-[11px]">
+                  <span className="text-[10px] leading-tight text-black/70 sm:text-[11px]">
                     {subtitle}
                   </span>
                 </span>
@@ -115,7 +118,7 @@ export function HeroBanner() {
           >
             <Link
               href="#products"
-              className="inline-flex h-11 items-center justify-center rounded-xl bg-white px-6 text-sm font-bold text-neutral-900 transition hover:bg-white/90 sm:h-12 sm:px-8 sm:text-base"
+              className="inline-flex h-11 items-center justify-center rounded-xl bg-black px-6 text-sm font-bold text-white transition hover:bg-black/90 sm:h-12 sm:px-8 sm:text-base"
             >
               مشاهده محصولات
             </Link>

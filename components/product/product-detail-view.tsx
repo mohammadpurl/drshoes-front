@@ -5,11 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, Heart, Star } from "lucide-react";
 import type { Product } from "@/lib/types";
 import { getRelatedProducts, getReviewsForProduct } from "@/data/products";
-import {
-  FOOT_TYPE_LABELS,
-  SURFACE_LABELS,
-  BRAND_GRADIENTS,
-} from "@/lib/constants";
+import { FOOT_TYPE_LABELS, SURFACE_LABELS } from "@/lib/constants";
 import { formatToman } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -65,11 +61,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
       </button>
 
       <div className="grid gap-8 lg:grid-cols-2">
-        <ProductGallery
-          images={product.images}
-          name={product.name}
-          brand={product.brand}
-        />
+        <ProductGallery images={product.images} name={product.name} />
 
         <div className="space-y-5">
           <div className="flex items-start justify-between gap-4">
