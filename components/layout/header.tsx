@@ -1,30 +1,32 @@
 "use client";
 
 import Link from "next/link";
-import { Search, ShoppingBag, User, Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes";
+import { Search, ShoppingBag, Moon, Sun } from "lucide-react";
+import { useTheme } from "@/components/theme-provider";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { PageContainer } from "@/components/layout/page-container";
+import { UserMenu } from "@/components/layout/user-menu";
 import { useCartStore } from "@/store/cart-store";
 import { motion } from "framer-motion";
 
 interface HeaderProps {
-  search: string;
-  onSearchChange: (value: string) => void;
+  search?: string;
+  onSearchChange?: (value: string) => void;
 }
 
-export function Header({ search, onSearchChange }: HeaderProps) {
+export function Header({ search = "", onSearchChange }: HeaderProps) {
   const items = useCartStore((s) => s.items);
   const setOpen = useCartStore((s) => s.setOpen);
   const count = items.reduce((n, i) => n + i.quantity, 0);
-  const { theme, setTheme } = useTheme();
+  const { theme, resolvedTheme, setTheme } = useTheme();
 
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-lg">
       <PageContainer className="flex min-w-0 items-center gap-2 py-2.5 sm:gap-3 sm:py-3">
         <Link href="/" className="shrink-0">
           <motion.div
+            dir="ltr"
             className="flex items-center gap-0.5 sm:gap-1"
             whileHover={{ scale: 1.02 }}
           >
@@ -40,7 +42,7 @@ export function Header({ search, onSearchChange }: HeaderProps) {
           <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
+            onChange={(e) => onSearchChange?.(e.target.value)}
             placeholder="جستجوی کفش، برند..."
             className="ps-9 pe-3"
           />
@@ -50,7 +52,9 @@ export function Header({ search, onSearchChange }: HeaderProps) {
           variant="ghost"
           size="icon"
           className="relative shrink-0"
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          onClick={() =>
+            setTheme(resolvedTheme === "dark" ? "light" : "dark")
+          }
           aria-label="تغییر تم"
         >
           <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
@@ -72,9 +76,7 @@ export function Header({ search, onSearchChange }: HeaderProps) {
           )}
         </Button>
 
-        <Button variant="ghost" size="icon" className="shrink-0" aria-label="پروفایل">
-          <User className="h-5 w-5" />
-        </Button>
+        <UserMenu />
       </PageContainer>
     </header>
   );

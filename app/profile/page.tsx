@@ -1,61 +1,116 @@
 "use client";
 
-import { User, Package, MapPin, Settings } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { MapPin, Package, Settings } from "lucide-react";
+import { useSessionStore } from "@/app/_store/auth-store";
 import { Header } from "@/components/layout/header";
 import { BottomNav } from "@/components/layout/bottom-nav";
 import { CartDrawer } from "@/components/cart/cart-drawer";
-import { useRouter } from "next/navigation";
+import { ProfileShell } from "@/components/profile/profile-shell";
+import { Button } from "@/components/ui/button";
 
-const menuItems = [
-  { icon: Package, label: "سفارش‌های من" },
-  { icon: MapPin, label: "آدرس‌ها" },
-  { icon: Settings, label: "تنظیمات" },
-];
+const quickLinks = [
+  {
+    href: "/profile/orders",
+    label: "سفارش‌های من",
+    description: "پیگیری وضعیت خریدها",
+    icon: Package,
+  },
+  {
+    href: "/profile/addresses",
+    label: "آدرس‌ها",
+    description: "مدیریت آدرس ارسال",
+    icon: MapPin,
+  },
+  {
+    href: "/profile/settings",
+    label: "ویرایش پروفایل",
+    description: "اطلاعات شخصی و تصویر",
+    icon: Settings,
+  },
+] as const;
 
 export default function ProfilePage() {
   const router = useRouter();
+  const status = useSessionStore((s) => s.status);
+  const session = useSessionStore((s) => s.session);
+
+  const isAuthenticated = status === "authenticated" && session;
+  const isLoading = status === "loading";
+
+  if (isLoading) {
+    return (
+      <>
+        <Header search="" onSearchChange={() => {}} />
+        <main className="page-container py-16 text-center text-sm text-muted-foreground">
+          در حال بارگذاری...
+        </main>
+        <BottomNav />
+        <CartDrawer />
+      </>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <>
+        <Header
+          search=""
+          onSearchChange={(q) => {
+            if (q) router.push(`/?q=${encodeURIComponent(q)}`);
+          }}
+        />
+        <main className="page-container mx-auto max-w-lg py-8 pb-24">
+          <Button variant="ghost" size="sm" className="mb-4 -ms-2" asChild>
+            <Link href="/">← بازگشت به فروشگاه</Link>
+          </Button>
+          <div className="rounded-2xl border border-border bg-card p-8 text-center">
+            <h1 className="text-xl font-bold">حساب کاربری</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              برای پیگیری سفارش و ذخیره آدرس، وارد حساب کاربری شوید
+            </p>
+            <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+              <Button className="flex-1" asChild>
+                <Link href="/login?redirect=/profile">ورود</Link>
+              </Button>
+              <Button variant="outline" className="flex-1" asChild>
+                <Link href="/register?redirect=/profile">ثبت‌نام</Link>
+              </Button>
+            </div>
+          </div>
+        </main>
+        <BottomNav />
+        <CartDrawer />
+      </>
+    );
+  }
 
   return (
-    <>
-      <Header
-        search=""
-        onSearchChange={(q) => {
-          if (q) router.push(`/?q=${encodeURIComponent(q)}`);
-        }}
-      />
-      <main className="page-container mx-auto max-w-lg py-8 pb-24">
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-border bg-card p-8">
-          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-primary/10">
-            <User className="h-10 w-10 text-primary" />
-          </div>
-          <h1 className="text-xl font-bold">کاربر مهمان</h1>
-          <p className="text-center text-sm text-muted-foreground">
-            برای پیگیری سفارش و ذخیره آدرس، وارد حساب کاربری شوید
-          </p>
-          <button
-            type="button"
-            className="rounded-xl bg-primary px-6 py-2.5 text-sm font-medium text-white"
-          >
-            ورود / ثبت‌نام
-          </button>
-        </div>
+    <ProfileShell title="پنل کاربری">
+      <p className="mb-6 text-sm text-muted-foreground">
+        از اینجا می‌توانید سفارش‌ها، آدرس‌ها و تنظیمات حساب خود را مدیریت کنید.
+      </p>
 
-        <ul className="mt-6 space-y-2">
-          {menuItems.map(({ icon: Icon, label }) => (
-            <li key={label}>
-              <button
-                type="button"
-                className="flex w-full items-center gap-3 rounded-xl border border-border bg-card px-4 py-3 text-start hover:bg-muted/50"
-              >
-                <Icon className="h-5 w-5 text-primary" />
-                <span>{label}</span>
-              </button>
-            </li>
-          ))}
-        </ul>
-      </main>
-      <BottomNav />
-      <CartDrawer />
-    </>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {quickLinks.map(({ href, label, description, icon: Icon }) => (
+          <Link
+            key={href}
+            href={href}
+            className="flex items-start gap-3 rounded-2xl border border-border bg-card p-4 transition hover:border-primary/40 hover:bg-muted/30"
+          >
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+              <Icon className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="font-semibold">{label}</p>
+              <p className="mt-0.5 text-xs text-muted-foreground">
+                {description}
+              </p>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </ProfileShell>
   );
 }

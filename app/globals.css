@@ -17,6 +17,7 @@
   --border: #e4e4e7;
   --input: #e4e4e7;
   --destructive: #ef4444;
+  --success: #22c55e;
 }
 
 .dark {
@@ -35,6 +36,7 @@
   --highlight: #ffd600;
   --border: #27272a;
   --input: #27272a;
+  --success: #22c55e;
 }
 
 @theme inline {
@@ -54,6 +56,7 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-destructive: var(--destructive);
+  --color-success: var(--success);
   --font-sans: var(--font-vazirmatn);
 }
 

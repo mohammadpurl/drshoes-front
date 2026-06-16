@@ -1,5 +1,6 @@
 "use client";
 
+import { BrandLogo } from "@/components/brand/brand-logo";
 import { formatToman } from "@/lib/format";
 import {
   BRANDS,
@@ -9,6 +10,7 @@ import {
   SURFACE_LABELS,
 } from "@/lib/constants";
 import type { Brand, FootType, Gender, ProductFilters, SortOption, Surface } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -37,21 +39,38 @@ export function FilterPanel({ filters, onChange }: FilterPanelProps) {
     <div className="space-y-6 text-sm">
       <section>
         <h3 className="mb-3 font-semibold">برند</h3>
-        <div className="space-y-2">
-          {BRANDS.map((brand) => (
-            <label key={brand} className="flex items-center gap-2 cursor-pointer">
-              <Checkbox
-                checked={filters.brands?.includes(brand) ?? false}
-                onCheckedChange={() =>
-                  onChange({
-                    ...filters,
-                    brands: toggleArray(filters.brands, brand as Brand),
-                  })
-                }
-              />
-              <span>{brand}</span>
-            </label>
-          ))}
+        <div className="grid grid-cols-2 gap-2.5">
+          {BRANDS.map((brand) => {
+            const selected = filters.brands?.includes(brand as Brand) ?? false;
+            return (
+              <label
+                key={brand}
+                className={cn(
+                  "relative flex cursor-pointer flex-col items-center gap-2 rounded-xl border p-3 transition",
+                  selected
+                    ? "border-primary bg-primary/5 ring-1 ring-primary/30"
+                    : "border-border bg-card hover:border-primary/35 hover:bg-muted/40"
+                )}
+              >
+                <Checkbox
+                  checked={selected}
+                  className="absolute start-2 top-2"
+                  onCheckedChange={() =>
+                    onChange({
+                      ...filters,
+                      brands: toggleArray(filters.brands, brand as Brand),
+                    })
+                  }
+                />
+                <div className="flex h-14 w-full items-center justify-center rounded-lg bg-muted/60 px-2 pt-4">
+                  <BrandLogo brand={brand as Brand} prominent />
+                </div>
+                <span className="text-center text-xs font-medium text-foreground">
+                  {brand}
+                </span>
+              </label>
+            );
+          })}
         </div>
       </section>
 

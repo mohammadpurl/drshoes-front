@@ -96,5 +96,20 @@ export const SHIPPING_COST = 350_000;
 
 export const PAGE_SIZE = 8;
 
+export const DEFAULT_PRODUCT_SORT = "newest" as const;
+
 export const WHATSAPP_NUMBER = "989051083434";
-export const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
+
+/** لینک رسمی واتساپ فروشگاه */
+export function getWhatsAppUrl(text = ""): string {
+  const params = new URLSearchParams({
+    phone: WHATSAPP_NUMBER,
+    text,
+    type: "phone_number",
+    app_absent: "0",
+    utm_source: "ig",
+  });
+  return `https://api.whatsapp.com/send/?${params.toString()}`;
+}
+
+export const WHATSAPP_URL = getWhatsAppUrl();

@@ -1,9 +1,11 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { X } from "lucide-react";
+import { BrandLogo } from "@/components/brand/brand-logo";
 import { FOOT_TYPE_LABELS, SURFACE_LABELS } from "@/lib/constants";
 import { formatToman } from "@/lib/format";
-import type { ProductFilters } from "@/lib/types";
+import type { Brand, ProductFilters } from "@/lib/types";
 
 interface ActiveFilterChipsProps {
   filters: ProductFilters;
@@ -16,12 +18,17 @@ export function ActiveFilterChips({
   onChange,
   onClear,
 }: ActiveFilterChipsProps) {
-  const chips: { key: string; label: string; remove: () => void }[] = [];
+  const chips: { key: string; label: ReactNode; remove: () => void }[] = [];
 
   filters.brands?.forEach((b) =>
     chips.push({
       key: `brand-${b}`,
-      label: b,
+      label: (
+        <span className="inline-flex items-center gap-1.5">
+          <BrandLogo brand={b as Brand} size={14} />
+          {b}
+        </span>
+      ),
       remove: () =>
         onChange({
           ...filters,

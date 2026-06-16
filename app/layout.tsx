@@ -3,6 +3,8 @@ import { Vazirmatn } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { WhatsAppFab } from "@/components/layout/whatsapp-fab";
+import { Analytics } from "@/components/seo/analytics";
+import { rootMetadata } from "@/lib/seo/metadata";
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic"],
@@ -11,9 +13,14 @@ const vazirmatn = Vazirmatn({
 });
 
 export const metadata: Metadata = {
-  title: "Dr.Shoes Running | فروشگاه کفش دویدن",
-  description:
-    "فروشگاه تخصصی کفش‌های دویدن — نایک، آدیداس، هوکا، بروکس و برندهای برتر",
+  ...rootMetadata,
+  ...(process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? {
+        verification: {
+          google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION,
+        },
+      }
+    : {}),
 };
 
 export const viewport = {
@@ -34,11 +41,20 @@ export default function RootLayout({
       className={`${vazirmatn.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+      </head>
       <body className="min-h-full flex flex-col font-sans">
         <Providers>
           {children}
           <WhatsAppFab />
         </Providers>
+        <Analytics />
       </body>
     </html>
   );

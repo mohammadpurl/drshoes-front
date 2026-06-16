@@ -20,6 +20,7 @@ export function Highlights({ onSelect }: HighlightsProps) {
         <motion.button
           key={h.id}
           type="button"
+          aria-label={`فیلتر ${h.label}`}
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: i * 0.05 }}

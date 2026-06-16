@@ -6,14 +6,12 @@ import { BottomNav } from "@/components/layout/bottom-nav";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { Highlights } from "@/components/home/highlights";
 import { HeroBanner } from "@/components/home/hero-banner";
-import { BrandScroll } from "@/components/home/brand-scroll";
 import { CategoryTabs } from "@/components/home/category-tabs";
 import { ProductGridSection } from "@/components/home/product-grid-section";
 import { FilterOverlay } from "@/components/filters/filter-overlay";
 import { FilterToolbar } from "@/components/filters/filter-toolbar";
 import { ActiveFilterChips } from "@/components/filters/active-filter-chips";
 import { useProductFilters } from "@/hooks/use-product-filters";
-import type { Brand } from "@/lib/types";
 
 function HomeContent() {
   const {
@@ -47,14 +45,6 @@ function HomeContent() {
     }
   };
 
-  const toggleBrand = (brand: Brand) => {
-    const brands = filters.brands ?? [];
-    const next = brands.includes(brand)
-      ? brands.filter((b) => b !== brand)
-      : [...brands, brand];
-    setFilters({ ...filters, brands: next.length ? next : undefined });
-  };
-
   return (
     <>
       <Header search={search} onSearchChange={setSearch} />
@@ -62,7 +52,6 @@ function HomeContent() {
         <div className="flex w-full min-w-0 flex-col gap-4 py-4">
           {/* <Highlights onSelect={handleHighlight} /> */}
           <HeroBanner />
-          <BrandScroll selected={filters.brands} onToggle={toggleBrand} />
           <CategoryTabs active={category} onChange={setCategory} />
         </div>
 

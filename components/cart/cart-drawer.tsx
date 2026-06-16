@@ -1,6 +1,8 @@
 "use client";
 
-import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import { ProductImage } from "@/components/product/product-image";
 import { Minus, Plus, Trash2 } from "lucide-react";
 import {
   Sheet,
@@ -11,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { useCartActions } from "@/hooks/use-cart-actions";
 import {
   useCartStore,
   getCartSubtotal,
@@ -20,13 +23,14 @@ import { formatToman } from "@/lib/format";
 import { SHIPPING_COST } from "@/lib/constants";
 
 export function CartDrawer() {
+  const router = useRouter();
   const isOpen = useCartStore((s) => s.isOpen);
   const setOpen = useCartStore((s) => s.setOpen);
   const items = useCartStore((s) => s.items);
+  const isSyncing = useCartStore((s) => s.isSyncing);
   const promoCode = useCartStore((s) => s.promoCode);
   const setPromoCode = useCartStore((s) => s.setPromoCode);
-  const updateQuantity = useCartStore((s) => s.updateQuantity);
-  const removeItem = useCartStore((s) => s.removeItem);
+  const { updateQuantity, removeItem, refreshCart } = useCartActions();
 
   const subtotal = getCartSubtotal(items);
   const discount = getPromoDiscount(subtotal, promoCode);
@@ -34,14 +38,35 @@ export function CartDrawer() {
   const total = subtotal - discount + shipping;
 
   return (
-    <Sheet open={isOpen} onOpenChange={setOpen}>
+    <Sheet
+      open={isOpen}
+      onOpenChange={(open) => {
+        setOpen(open);
+        if (open) {
+          const state = useCartStore.getState();
+          if (!state.isSyncing && state.items.length === 0) {
+            void refreshCart();
+          }
+        }
+      }}
+    >
       <SheetContent side="right" className="flex w-full flex-col p-0 sm:max-w-md">
         <SheetHeader className="border-b px-4 py-4 text-start">
-          <SheetTitle>سبد خرید ({items.length})</SheetTitle>
+          <SheetTitle className="flex items-center gap-2">
+            سبد خرید ({items.length})
+            {isSyncing && (
+              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+            )}
+          </SheetTitle>
         </SheetHeader>
 
         <div className="flex-1 overflow-y-auto px-4 py-4">
-          {items.length === 0 ? (
+          {isSyncing && items.length === 0 ? (
+            <p className="flex items-center justify-center gap-2 py-12 text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              در حال بارگذاری سبد...
+            </p>
+          ) : items.length === 0 ? (
             <p className="py-12 text-center text-muted-foreground">
               سبد خرید شما خالی است
             </p>
@@ -49,12 +74,14 @@ export function CartDrawer() {
             <ul className="space-y-4">
               {items.map((item) => (
                 <li
-                  key={`${item.productId}-${item.size}`}
+                  key={item.lineId ?? `${item.productId}-${item.size}`}
                   className="flex gap-3 rounded-xl border border-border p-3"
                 >
                   <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-muted">
-                    <Image
+                    <ProductImage
                       src={item.image}
+                      slug={item.slug}
+                      productId={item.productId}
                       alt={item.name}
                       fill
                       className="object-cover"
@@ -74,13 +101,10 @@ export function CartDrawer() {
                       <div className="flex items-center gap-2 rounded-lg border border-border">
                         <button
                           type="button"
-                          className="p-1.5 hover:bg-muted rounded-s-lg"
+                          className="rounded-s-lg p-1.5 hover:bg-muted"
+                          disabled={isSyncing}
                           onClick={() =>
-                            updateQuantity(
-                              item.productId,
-                              item.size,
-                              item.quantity - 1
-                            )
+                            void updateQuantity(item, item.quantity - 1)
                           }
                         >
                           <Minus className="h-4 w-4" />
@@ -90,13 +114,10 @@ export function CartDrawer() {
                         </span>
                         <button
                           type="button"
-                          className="p-1.5 hover:bg-muted rounded-e-lg"
+                          className="rounded-e-lg p-1.5 hover:bg-muted"
+                          disabled={isSyncing}
                           onClick={() =>
-                            updateQuantity(
-                              item.productId,
-                              item.size,
-                              item.quantity + 1
-                            )
+                            void updateQuantity(item, item.quantity + 1)
                           }
                         >
                           <Plus className="h-4 w-4" />
@@ -104,9 +125,8 @@ export function CartDrawer() {
                       </div>
                       <button
                         type="button"
-                        onClick={() =>
-                          removeItem(item.productId, item.size)
-                        }
+                        disabled={isSyncing}
+                        onClick={() => void removeItem(item)}
                         className="text-muted-foreground hover:text-destructive"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -120,7 +140,7 @@ export function CartDrawer() {
         </div>
 
         {items.length > 0 && (
-          <div className="border-t px-4 py-4 space-y-4">
+          <div className="space-y-4 border-t px-4 py-4">
             <div>
               <label className="mb-1.5 block text-sm font-medium">
                 کد تخفیف
@@ -161,7 +181,15 @@ export function CartDrawer() {
               </div>
             </div>
 
-            <Button className="w-full" size="lg">
+            <Button
+              className="w-full"
+              size="lg"
+              disabled={isSyncing}
+              onClick={() => {
+                setOpen(false);
+                router.push("/checkout");
+              }}
+            >
               تکمیل خرید
             </Button>
           </div>

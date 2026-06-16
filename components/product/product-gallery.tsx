@@ -1,16 +1,23 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ProductImage } from "@/components/product/product-image";
 import { cn } from "@/lib/utils";
 
 interface ProductGalleryProps {
   images: string[];
-  name: string;
+  alt: string;
+  slug?: string;
+  productId?: string;
 }
 
-export function ProductGallery({ images, name }: ProductGalleryProps) {
+export function ProductGallery({
+  images,
+  alt,
+  slug,
+  productId,
+}: ProductGalleryProps) {
   const [active, setActive] = useState(0);
   const [zoomed, setZoomed] = useState(false);
 
@@ -31,9 +38,11 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
               zoomed && "scale-150 transition-transform duration-300"
             )}
           >
-            <Image
+            <ProductImage
               src={images[active]}
-              alt={name}
+              slug={slug}
+              productId={productId}
+              alt={alt}
               fill
               className="object-contain p-6"
               sizes="(max-width: 768px) 100vw, 50vw"
@@ -56,12 +65,15 @@ export function ProductGallery({ images, name }: ProductGalleryProps) {
               active === i ? "border-primary" : "border-transparent"
             )}
           >
-            <Image
+            <ProductImage
               src={img}
-              alt=""
+              slug={slug}
+              productId={productId}
+              alt={`${alt} — تصویر ${i + 1}`}
               fill
               className="object-contain p-1"
               sizes="64px"
+              loading="lazy"
             />
           </button>
         ))}

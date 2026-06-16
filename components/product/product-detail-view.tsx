@@ -1,11 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { ArrowRight, Heart, Star } from "lucide-react";
-import type { Product } from "@/lib/types";
-import { getRelatedProducts, getReviewsForProduct } from "@/data/products";
-import { FOOT_TYPE_LABELS, SURFACE_LABELS } from "@/lib/constants";
+import Link from "next/link";
+import { Heart, Star } from "lucide-react";
+import type { Product, Review } from "@/lib/types";
+import { CATEGORIES, FOOT_TYPE_LABELS, SURFACE_LABELS } from "@/lib/constants";
+import { Breadcrumbs, type BreadcrumbItem } from "@/components/seo/breadcrumbs";
+import { ProductShare } from "@/components/product/product-share";
+import { BrandLogo } from "@/components/brand/brand-logo";
+import { brandPath, categoryPath, productImageAlt } from "@/lib/seo/site";
 import { formatToman } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -13,27 +16,34 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ProductGallery } from "./product-gallery";
 import { ProductCard } from "./product-card";
-import { getCardAspectVariant } from "@/lib/card-layout";
-import { useCartStore } from "@/store/cart-store";
+import { ProductReviewForm } from "./product-review-form";
+import { useCartActions } from "@/hooks/use-cart-actions";
 import { useWishlistStore } from "@/store/wishlist-store";
 
 interface ProductDetailViewProps {
   product: Product;
+  related?: Product[];
+  reviews?: Review[];
+  breadcrumbs?: BreadcrumbItem[];
 }
 
-export function ProductDetailView({ product }: ProductDetailViewProps) {
-  const router = useRouter();
+export function ProductDetailView({
+  product,
+  related = [],
+  reviews: productReviews = [],
+  breadcrumbs = [],
+}: ProductDetailViewProps) {
+  const categoryLabel =
+    CATEGORIES.find((c) => c.value === product.category)?.label ??
+    product.category;
   const [size, setSize] = useState(product.sizes[0]);
-  const addItem = useCartStore((s) => s.addItem);
-  const setCartOpen = useCartStore((s) => s.setOpen);
+  const [reviews, setReviews] = useState<Review[]>(productReviews);
+  const { addItem } = useCartActions();
   const toggleWish = useWishlistStore((s) => s.toggle);
   const isWished = useWishlistStore((s) => s.has(product.id));
 
-  const related = getRelatedProducts(product);
-  const productReviews = getReviewsForProduct(product.id);
-
   const handleAdd = () => {
-    addItem({
+    void addItem({
       productId: product.id,
       slug: product.slug,
       name: product.name,
@@ -45,29 +55,51 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
   };
 
   const handleBuyNow = () => {
-    handleAdd();
-    setCartOpen(true);
+    void addItem({
+      productId: product.id,
+      slug: product.slug,
+      name: product.name,
+      brand: product.brand,
+      price: product.price,
+      size,
+      image: product.images[0],
+    });
   };
 
   return (
     <div className="page-container pb-24 pt-4 md:pb-8">
-      <button
-        type="button"
-        onClick={() => router.back()}
-        className="mb-4 flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground"
-      >
-        <ArrowRight className="h-4 w-4" />
-        بازگشت
-      </button>
+      {breadcrumbs.length > 0 && <Breadcrumbs items={breadcrumbs} />}
 
       <div className="grid gap-8 lg:grid-cols-2">
-        <ProductGallery images={product.images} name={product.name} />
+        <ProductGallery
+          images={product.images}
+          alt={productImageAlt(product)}
+          slug={product.slug}
+          productId={product.id}
+        />
 
         <div className="space-y-5">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <p className="text-sm text-muted-foreground">{product.brand}</p>
-              <h1 className="text-2xl font-bold">{product.name}</h1>
+              <p className="text-sm text-muted-foreground">
+                <Link
+                  href={brandPath(product.brand)}
+                  className="inline-flex items-center gap-1.5 hover:text-foreground"
+                >
+                  <BrandLogo brand={product.brand} size={18} />
+                  {product.brand}
+                </Link>
+                {" · "}
+                <Link
+                  href={categoryPath(product.category)}
+                  className="hover:text-foreground"
+                >
+                  کفش {categoryLabel}
+                </Link>
+              </p>
+              <h1 className="text-2xl font-bold">
+                کفش رانینگ {product.brand} {product.name}
+              </h1>
               {product.rating && (
                 <div className="mt-1 flex items-center gap-1 text-sm">
                   <Star className="h-4 w-4 fill-highlight text-highlight" />
@@ -186,9 +218,14 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
             ))}
           </div>
 
+          <h2 className="text-lg font-semibold">توضیحات محصول</h2>
           <p className="text-sm leading-relaxed text-muted-foreground">
             {product.description}
           </p>
+
+          <div className="flex flex-wrap gap-3">
+            <ProductShare product={product} />
+          </div>
 
           <div className="flex gap-3">
             <Button className="flex-1" size="lg" onClick={handleAdd}>
@@ -210,13 +247,21 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
 
       <section>
         <h2 className="mb-4 text-xl font-bold">نظرات مشتریان</h2>
-        {productReviews.length === 0 ? (
+        <div className="mb-6">
+          <ProductReviewForm
+            slug={product.slug}
+            onCreated={(review) =>
+              setReviews((current) => [...current, review])
+            }
+          />
+        </div>
+        {reviews.length === 0 ? (
           <p className="text-muted-foreground text-sm">
             هنوز نظری ثبت نشده است.
           </p>
         ) : (
           <ul className="space-y-4">
-            {productReviews.map((r) => (
+            {reviews.map((r) => (
               <li
                 key={r.id}
                 className="rounded-xl border border-border p-4"
@@ -251,14 +296,9 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
 
       <section>
         <h2 className="mb-4 text-xl font-bold">محصولات مرتبط</h2>
-        <div className="product-masonry columns-1 sm:columns-2 lg:columns-3">
-          {related.map((p, index) => (
-            <div key={p.id} className="mb-5 break-inside-avoid sm:mb-6">
-              <ProductCard
-                product={p}
-                aspectVariant={getCardAspectVariant(index)}
-              />
-            </div>
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
+          {related.map((p) => (
+            <ProductCard key={p.id} product={p} />
           ))}
         </div>
       </section>

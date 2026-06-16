@@ -3,10 +3,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Headphones, ShieldCheck, Truck } from "lucide-react";
+import {
+  ChevronLeft,
+  Globe,
+  Headphones,
+  ShieldCheck,
+  Truck,
+} from "lucide-react";
 import { WHATSAPP_URL } from "@/lib/constants";
 
-const HERO_IMAGE = "/images/hero.png";
+const HERO_BG_DESKTOP = "/images/brands/Hero Baner4.png";
+const HERO_BG_MOBILE = "/images/brands/mobileBaner.png";
+const LOGO = "/images/Logo.png";
 
 const FEATURES = [
   {
@@ -15,14 +23,19 @@ const FEATURES = [
     subtitle: "۱۰۰٪ اورجینال",
   },
   {
+    icon: Globe,
+    title: "واردات مستقیم",
+    subtitle: "برندهای معتبر جهانی",
+  },
+  {
     icon: Truck,
     title: "ارسال سریع",
     subtitle: "به سراسر ایران",
   },
   {
     icon: Headphones,
-    title: "مشاوره تخصصی",
-    subtitle: "انتخاب کفش مناسب",
+    title: "پشتیبانی تخصصی",
+    subtitle: "قبل و بعد از خرید",
   },
 ] as const;
 
@@ -39,100 +52,142 @@ function WhatsAppIcon({ className }: { className?: string }) {
   );
 }
 
+function HeroContent() {
+  return (
+    <>
+      <motion.div
+        initial={{ y: 10, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.05 }}
+      >
+        <Image
+          src={LOGO}
+          alt="Dr. Shoes"
+          width={160}
+          height={100}
+          className="h-11 w-auto object-contain object-left sm:h-14 lg:h-16"
+          priority
+        />
+      </motion.div>
+
+      <motion.div
+        initial={{ y: 10, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.08 }}
+        className="space-y-1.5 text-start sm:space-y-2"
+      >
+        <h1 className="text-lg font-black leading-[1.25] text-black sm:text-2xl lg:text-3xl">
+          <span className="text-blue-800">اورجینال‌ترین</span>
+          <br />
+          کفش‌های{" "}
+          <span className="bg-gradient-to-l from-blue-700 via-blue-800 to-blue-950 bg-clip-text text-transparent">
+            رانینگ دنیا
+          </span>
+        </h1>
+        <p className="max-w-md text-sm leading-relaxed text-neutral-800 sm:text-sm">
+          واردات مستقیم برندهای معتبر جهانی با ضمانت اصالت کالا
+        </p>
+      </motion.div>
+
+      <motion.ul
+        initial={{ y: 10, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.12 }}
+        className="grid grid-cols-2 gap-x-3 gap-y-3 sm:gap-x-3 sm:gap-y-3"
+      >
+        {FEATURES.map(({ icon: Icon, title, subtitle }) => (
+          <li key={title} className="flex items-start gap-2">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-blue-700/40 bg-blue-100 text-blue-800 sm:h-8 sm:w-8">
+              <Icon className="h-3.5 w-3.5" strokeWidth={1.75} />
+            </span>
+            <span className="flex min-w-0 flex-col gap-0.5 text-start">
+              <span className="text-[11px] font-semibold leading-tight text-black sm:text-[10px]">
+                {title}
+              </span>
+              <span className="text-[10px] leading-tight text-neutral-700 sm:text-[9px]">
+                {subtitle}
+              </span>
+            </span>
+          </li>
+        ))}
+      </motion.ul>
+
+      <motion.div
+        initial={{ y: 10, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.16 }}
+        className="flex flex-wrap items-center gap-2.5 sm:gap-3"
+      >
+        <Link
+          href="#products"
+          className="inline-flex h-10 flex-1 items-center justify-center gap-1 rounded-full bg-blue-700 px-4 text-sm font-bold text-white shadow-lg shadow-blue-700/25 transition hover:bg-blue-800 sm:h-10 sm:flex-none sm:px-6 sm:text-sm"
+        >
+          مشاهده محصولات
+          <ChevronLeft className="h-4 w-4" />
+        </Link>
+        <a
+          href={WHATSAPP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex h-10 flex-1 items-center justify-center gap-1.5 rounded-full border border-black/15 bg-white px-4 text-sm font-semibold text-black shadow-sm transition hover:bg-neutral-50 sm:h-10 sm:flex-none sm:px-5 sm:text-sm"
+        >
+          <WhatsAppIcon className="h-5 w-5 text-success" />
+          واتساپ
+        </a>
+      </motion.div>
+
+      <motion.div
+        initial={{ y: 8, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2 }}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-blue-700/20 bg-blue-50 px-3 py-2 text-[11px] font-semibold text-black sm:w-fit sm:rounded-full sm:px-3 sm:py-1.5 sm:text-[10px]"
+      >
+        <ShieldCheck className="h-4 w-4 shrink-0 text-blue-800" strokeWidth={2} />
+        اصالت را با ما تجربه کنید — ۱۰۰٪ اورجینال
+      </motion.div>
+    </>
+  );
+}
+
+/** دسکتاپ: بنر افقی + متن روی تصویر — موبایل: بنر عمودی + متن زیر تصویر */
 export function HeroBanner() {
   return (
     <motion.section
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="relative w-full min-h-[320px] overflow-hidden rounded-2xl shadow-lg sm:min-h-[360px] sm:rounded-3xl md:min-h-[400px] lg:min-h-[420px]"
+      className="relative w-full overflow-hidden rounded-2xl bg-white shadow-lg sm:rounded-3xl md:bg-transparent"
     >
+      {/* موبایل */}
       <Image
-        src={HERO_IMAGE}
+        src={HERO_BG_MOBILE}
         alt=""
-        fill
+        width={1080}
+        height={1620}
         priority
-        className="object-cover object-left md:object-[15%_center]"
+        className="h-auto w-full md:hidden"
         sizes="100vw"
-      />
-
-      <div
-        className="absolute inset-0 bg-gradient-to-e from-white/95 from-0% via-white/75 via-45% to-transparent to-100%"
-        aria-hidden
-      />
-      <div
-        className="absolute inset-0 bg-white/40 md:bg-transparent"
         aria-hidden
       />
 
-      <div className="relative z-10 flex h-full min-h-[inherit] flex-col justify-center p-5 sm:p-7 md:p-10 lg:p-12">
-        <div className="ms-auto flex w-full max-w-xl flex-col items-start gap-4 text-black md:gap-5">
-          <motion.div
-            initial={{ y: 12, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.05 }}
-            className="space-y-2 text-start md:space-y-3"
-          >
-            <h1 className="text-2xl font-black leading-tight sm:text-3xl md:text-4xl lg:text-[2.75rem]">
-              هر قدم، یک انتخاب{" "}
-              <span className="text-[#22c55e]">حرفه‌ای</span>
-            </h1>
-            <p className="max-w-md text-sm leading-relaxed text-black/80 sm:text-base md:text-lg">
-              کفش‌های رانینگ اورجینال مناسب فرم و آناتومی پای شما
-            </p>
-          </motion.div>
+      {/* دسکتاپ */}
+      <Image
+        src={HERO_BG_DESKTOP}
+        alt=""
+        width={2400}
+        height={960}
+        priority
+        className="hidden h-auto w-full md:block"
+        sizes="100vw"
+        aria-hidden
+      />
 
-          <motion.ul
-            initial={{ y: 12, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.12 }}
-            className="flex w-full flex-wrap gap-4 sm:gap-5 md:gap-6"
-          >
-            {FEATURES.map(({ icon: Icon, title, subtitle }) => (
-              <li
-                key={title}
-                className="flex min-w-[7.5rem] items-center gap-2.5 sm:min-w-0"
-              >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-black/15 bg-black/5 sm:h-10 sm:w-10">
-                  <Icon
-                    className="h-4 w-4 text-black sm:h-[18px] sm:w-[18px]"
-                    strokeWidth={1.75}
-                  />
-                </span>
-                <span className="flex flex-col gap-0.5 text-start">
-                  <span className="text-[11px] font-semibold leading-tight text-black sm:text-xs">
-                    {title}
-                  </span>
-                  <span className="text-[10px] leading-tight text-black/70 sm:text-[11px]">
-                    {subtitle}
-                  </span>
-                </span>
-              </li>
-            ))}
-          </motion.ul>
+      <div
+        className="pointer-events-none absolute inset-y-0 left-0 hidden w-[min(100%,560px)] bg-gradient-to-r from-white/90 from-0% via-white/55 via-[50%] to-transparent to-[100%] md:block lg:via-[45%] lg:to-[88%]"
+        aria-hidden
+      />
 
-          <motion.div
-            initial={{ y: 12, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="flex w-full flex-wrap items-center gap-3"
-          >
-            <Link
-              href="#products"
-              className="inline-flex h-11 items-center justify-center rounded-xl bg-black px-6 text-sm font-bold text-white transition hover:bg-black/90 sm:h-12 sm:px-8 sm:text-base"
-            >
-              مشاهده محصولات
-            </Link>
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-[#25D366] px-5 text-sm font-bold text-white transition hover:bg-[#20bd5a] sm:h-12 sm:px-6 sm:text-base"
-            >
-              <WhatsAppIcon className="h-5 w-5 shrink-0" />
-              مشاوره در واتساپ
-            </a>
-          </motion.div>
-        </div>
+      <div className="flex flex-col gap-4 px-4 py-4 md:absolute md:inset-y-0 md:left-0 md:z-10 md:max-w-[min(100%,520px)] md:justify-center md:gap-4 md:px-6 md:py-8 lg:gap-5 lg:px-8 lg:py-10">
+        <HeroContent />
       </div>
     </motion.section>
   );

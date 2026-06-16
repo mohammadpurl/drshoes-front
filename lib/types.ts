@@ -47,6 +47,7 @@ export interface Product {
   isBestseller: boolean;
   isSpecial?: boolean;
   images: string[];
+  videos?: string[];
   description: string;
   tags: string[];
   rating?: number;
@@ -54,6 +55,8 @@ export interface Product {
 }
 
 export interface CartItem {
+  /** شناسه خط سبد در API — برای PATCH/DELETE */
+  lineId?: string;
   productId: string;
   slug: string;
   name: string;

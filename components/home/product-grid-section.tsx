@@ -4,7 +4,6 @@ import { useEffect, useRef } from "react";
 import { Loader2 } from "lucide-react";
 import { ProductCard } from "@/components/product/product-card";
 import { useInfiniteProducts } from "@/hooks/use-infinite-products";
-import { getCardAspectVariant } from "@/lib/card-layout";
 import type { ProductFilters } from "@/lib/types";
 
 interface ProductGridSectionProps {
@@ -16,8 +15,15 @@ export function ProductGridSection({
   filters,
   onTotalChange,
 }: ProductGridSectionProps) {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useInfiniteProducts(filters);
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+    error,
+  } = useInfiniteProducts(filters);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   const products = data?.pages.flatMap((p) => p.products) ?? [];
@@ -52,6 +58,16 @@ export function ProductGridSection({
     );
   }
 
+  if (isError) {
+    return (
+      <p className="py-12 text-center text-sm text-destructive">
+        {error instanceof Error
+          ? error.message
+          : "خطا در دریافت محصولات از سرور"}
+      </p>
+    );
+  }
+
   return (
     <section id="products" className="w-full min-w-0 scroll-mt-24 pb-8 pt-4">
       {products.length === 0 ? (
@@ -59,17 +75,9 @@ export function ProductGridSection({
           محصولی یافت نشد
         </p>
       ) : (
-        <div className="product-masonry w-full columns-2 md:columns-3 xl:columns-4">
-          {products.map((product, index) => (
-            <div
-              key={product.id}
-              className="mb-5 break-inside-avoid sm:mb-6"
-            >
-              <ProductCard
-                product={product}
-                aspectVariant={getCardAspectVariant(index)}
-              />
-            </div>
+        <div className="grid w-full grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}

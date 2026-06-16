@@ -3,6 +3,7 @@
 import { useCallback, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { ProductFilters } from "@/lib/types";
+import { DEFAULT_PRODUCT_SORT } from "@/lib/constants";
 import {
   filtersToSearchParams,
   searchParamsToFilters,
@@ -12,10 +13,13 @@ export function useProductFilters() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const filters = useMemo(
-    () => searchParamsToFilters(searchParams),
-    [searchParams]
-  );
+  const filters = useMemo(() => {
+    const parsed = searchParamsToFilters(searchParams);
+    return {
+      ...parsed,
+      sort: parsed.sort ?? DEFAULT_PRODUCT_SORT,
+    };
+  }, [searchParams]);
 
   const setFilters = useCallback(
     (next: ProductFilters) => {
