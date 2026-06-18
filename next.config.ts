@@ -1,5 +1,15 @@
 import type { NextConfig } from "next";
 
+function supabaseStoragePatterns() {
+  return [
+    {
+      protocol: "https" as const,
+      hostname: "**.supabase.co",
+      pathname: "/storage/v1/object/public/**",
+    },
+  ];
+}
+
 function mediaRemotePatterns() {
   const host = process.env.NEXT_PUBLIC_MEDIA_CDN_HOST?.trim();
   if (!host) return [];
@@ -54,6 +64,7 @@ function apiRemotePatterns() {
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
+      ...supabaseStoragePatterns(),
       ...mediaRemotePatterns(),
       ...apiRemotePatterns(),
     ],

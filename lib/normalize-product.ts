@@ -17,6 +17,7 @@ export function isPlaceholderImageUrl(url: string): boolean {
   if (value.startsWith("/images/Products")) return false;
   if (value.includes("/static/products/")) return false;
   if (value.includes("/api/v1/media/")) return false;
+  if (value.includes(".supabase.co/storage/v1/object/")) return false;
 
   try {
     const { hostname } = new URL(value);
